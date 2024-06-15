@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sophie Bluel - Architecte d'intérieur</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="./assets/style.css" />
+    <script
+      src="https://kit.fontawesome.com/797f7ba02a.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="top-banner" id="topBanner">
+      <i class="fa-regular fa-pen-to-square"></i> Mode edition
+    </div>
+    <div class="height"></div>
+    <header>
+      <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+      <nav>
+        <ul>
+          <li>projets</li>
+          <li>contact</li>
+          <a href="log_in.html"><li id="loginLogout">login</li></a>
+          <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <dialog class="dialog">
+        <div class="right" id="right">
+          <button class="dialogCloseBtn hidden" id="btnafteradd">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <button class="dialogCloseBtn" id="dialogCloseBtn">
+            <i class="fa-solid fa-x"></i>
+          </button>
+        </div>
+        <div id="beforeadd">
+          <div class="dialogTitle">Galerie photo</div>
+          <input
+            type="file"
+            accept="image/*"
+            class="hidden"
+            id="imageInput"
+            multiple
+          />
+          <div class="imagesInputContainer" id="imagesInputContainer"></div>
+          <div class="line"></div>
+          <button id="btnAddImg" class="btnAddImg">Ajouter une photo</button>
+        </div>
+        <div id="afteradd" class="container hidden">
+          <div class="dialogTitle">Ajout photo</div>
+          <div class="imgFormContainer">
+            <div class="imgFormContainer__input" id="imgFormContainer__input">
+              <i class="fa-solid fa-image"></i>
+              <button id="addImg">+ Ajouter photo</button>
+              <div>jpg, png : 4mo max</div>
+            </div>
+            <img class="hidden imgInput" id="imgFormContainer__input_img" />
+          </div>
+          <form>
+            <label class="textInput">
+              Titre
+              <input id="titleInput" />
+            </label>
+            <label class="textInput">
+              Catégorie
+              <select id="categoryInput"></select>
+            </label>
+            <div class="line"></div>
+            <button class="btnSubmit" id="btnsubmit">Valider</button>
+          </form>
+        </div>
+      </dialog>
+      <section id="introduction">
+        <figure>
+          <img src="./assets/images/sophie-bluel.png" alt="" />
+        </figure>
+        <article>
+          <h2>Designer d'espace</h2>
+          <p>
+            Je raconte votre histoire, je valorise vos idées. Je vous accompagne
+            de la conception à la livraison finale du chantier.
+          </p>
+          <p>
+            Chaque projet sera étudié en commun, de façon à mettre en valeur les
+            volumes, les matières et les couleurs dans le respect de l’esprit
+            des lieux et le choix adapté des matériaux. Le suivi du chantier
+            sera assuré dans le souci du détail, le respect du planning et du
+            budget.
+          </p>
+          <p>
+            En cas de besoin, une équipe pluridisciplinaire peut-être constituée
+            : architecte DPLG, décorateur(trice)
+          </p>
+        </article>
+      </section>
+      <section id="portfolio">
+        <h2 class="titleModifier">
+          Mes Projets<button class="btnModifier hidden" id="dialogBtn">
+            <i class="fa-regular fa-pen-to-square"></i>modifier
+          </button>
+        </h2>
+        <div id="filters"></div>
+        <div class="gallery"></div>
+      </section>
+      <section id="contact">
+        <h2>Contact</h2>
+        <p>Vous avez un projet ? Discutons-en !</p>
+        <form action="#" method="post">
+          <label for="name" class="textInput"
+            >Nom <input type="text" name="name" id="name"
+          /></label>
+
+          <label for="email" class="textInput"
+            >Email <input type="email" name="email" id="email"
+          /></label>
+
+          <label for="message" class="textInput"
+            >Message
+            <textarea
+              name="message"
+              id="message"
+              cols="30"
+              rows="10"
+            ></textarea>
+          </label>
+
+          <input type="submit" value="Envoyer" />
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <nav>
+        <ul>
+          <li>Mentions Légales</li>
+        </ul>
+      </nav>
+    </footer>
+  </body>
+  <script src="fichier.js"></script>
+</html>
