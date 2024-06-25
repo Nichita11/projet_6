@@ -1,4 +1,4 @@
-async function requestWorks() {
+ async function requestWorks() {
   const response = await fetch("http://localhost:5678/api/works");
   const data = await response.json();
   return data;
@@ -15,6 +15,7 @@ function displayWorks(works) {
   galleryContainer.innerHTML = "";
   for (const work of works) {
     const figure = document.createElement("figure");
+    figure.id = work.id;
     const img = document.createElement("img");
     img.classList.add("imgPortfolio");
     img.src = work.imageUrl;
@@ -158,47 +159,91 @@ const toBase64 = (file) =>
 
 const fileList = [];
 
-// const images = await Promise.all(
-//   auction.images.map((image) =>
-//     getFileFromUrl(
-//       `${process.env.NEXT_PUBLIC_APP_URL}${image.path}`,
-//       image.path
-//     )
-//   )
-// );
 const worksIdArray = [];
 const DisplayWorksOnModal = async () => {
   const works = await requestWorks();
   console.log(works);
-  imageFiles = await Promise.all(
+  const imageFiles = await Promise.all(
     works.map((el) => {
       worksIdArray.push(el.id);
       return getFileFromUrl(el.imageUrl, `image-${el.title}`);
     })
   );
+
   const dataTransfer = new DataTransfer();
-  for (el of imageFiles) {
+  for (const el of imageFiles) {
     dataTransfer.items.add(el);
   }
   imageInput.files = dataTransfer.files;
 
   imageInput.dispatchEvent(new Event("change"));
 
+  async function deleteImage(workId, div) {
+    console.log("workId", workId, "element", div);
+    try {
+      const result = await DeleteWorks(workId);
+      if (result === "success") {
+        const index = worksIdArray.indexOf(workId);
+        if (index !== -1) {
+          worksIdArray.splice(index, 1);
+          imageFiles.splice(index, 1);
+        }
+        div.remove();
+        document.getElementById(workId).remove();
+      } else {
+        console.error("Erreur.");
+      }
+    } catch (error) {
+      console.error("Error in deleteImage:", error);
+    }
+  }
+
+  const imagesInputContainer = document.getElementById("imagesInputContainer");
+  imagesInputContainer.innerHTML = "";
+  for (let i = 0; i < imageFiles.length; i++) {
+    const div = document.createElement("div");
+    div.classList.add("div");
+
+    const img = document.createElement("img");
+    img.src = await toBase64(imageFiles[i]);
+    img.classList.add("img");
+
+    const btn = document.createElement("button");
+    btn.id = `${i}`;
+    btn.classList.add("imgDeleteBtn");
+    btn.addEventListener(
+      "click",
+      async () => await deleteImage(worksIdArray[i], div)
+    );
+
+    const font = document.createElement("i");
+    font.classList.add("fa-solid");
+    font.classList.add("fa-trash-can");
+    btn.appendChild(font);
+
+    div.appendChild(btn);
+    div.appendChild(img);
+    imagesInputContainer.appendChild(div);
+  }
+
   const categories = await fetch("http://localhost:5678/api/categories").then(
     (res) => res.json()
   );
+
+  const categoryInput = document.getElementById("categoryInput");
+  categoryInput.innerHTML = "";
   const option = document.createElement("option");
   option.innerText = "";
   option.value = "null";
   categoryInput.appendChild(option);
-  for (category of categories) {
+
+  for (const category of categories) {
     const option = document.createElement("option");
     option.innerText = category.name;
     option.value = category.id;
     categoryInput.appendChild(option);
   }
 };
-
 titleInput.addEventListener("change", (e) => {
   if (e.target.value !== "") {
     formSchema.title = true;
@@ -239,8 +284,6 @@ btnAddImg.addEventListener("click", () => {
   afteradd.classList.remove("hidden");
   right.classList.add("right-afteradd");
   btnafteradd.classList.remove("hidden");
-  // console.log("clicked");
-  // imageInput.click();
 });
 addImg.addEventListener("click", () => {
   imageInput.click();
@@ -269,9 +312,8 @@ btnsubmit.addEventListener("click", async (e) => {
         console.log(res);
 
         const galleryContainer = document.querySelector(".gallery");
-        // galleryContainer.innerHTML = "";
-
         const figure = document.createElement("figure");
+        figure.id = json.id;
         const img = document.createElement("img");
         img.classList.add("imgPortfolio");
         img.src = json.imageUrl;
@@ -284,8 +326,32 @@ btnsubmit.addEventListener("click", async (e) => {
         figure.appendChild(figcaption);
 
         galleryContainer.appendChild(figure);
+
+        const div = document.createElement("div");
+        div.classList.add("div");
+
+        const imgModal = document.createElement("img");
+        imgModal.src = json.imageUrl;
+        imgModal.classList.add("img");
+
+        const btn = document.createElement("button");
+        btn.id = `${json.id}`;
+        btn.classList.add("imgDeleteBtn");
+        btn.addEventListener(
+          "click",
+          async () => await deleteImage(json.id, div)
+        );
+
+        const font = document.createElement("i");
+        font.classList.add("fa-solid");
+        font.classList.add("fa-trash-can");
+        btn.appendChild(font);
+
+        div.appendChild(btn);
+        div.appendChild(imgModal);
+        imagesInputContainer.appendChild(div);
       })
-      .catch((res) => console.log("suka" + res));
+      .catch((res) => console.log("RESPONSE" + res));
   }
 });
 btnafteradd.addEventListener("click", () => {
@@ -325,49 +391,29 @@ imageInput.onchange = async function (e) {
   } else {
     btnsubmit.classList.remove("btnAddImg");
   }
-
-  for (let i = 0; i < fileList.length; i++) {
-    const div = document.createElement("div");
-    div.classList.add("div");
-    div.id = `${i}`;
-
-    const img = document.createElement("img");
-    img.src = await toBase64(fileList[i]);
-    img.classList.add("img");
-    const btn = document.createElement("button");
-    btn.classList.add("imgDeleteBtn");
-    btn.onclick = () => {
-      let workId = worksIdArray[i];
-      DeleteWorks(workId);
-
-      div.remove();
-      fileList.splice(i, 1);
-      const dataTransfer = new DataTransfer();
-      for (el of fileList) {
-        dataTransfer.items.add(el);
-      }
-      imageInput.files = dataTransfer.files;
-    };
-    const font = document.createElement("i");
-    font.classList.add("fa-solid");
-    font.classList.add("fa-trash-can");
-    btn.appendChild(font);
-    div.appendChild(btn);
-    div.appendChild(img);
-    imagesInputContainer.appendChild(div);
-  }
 };
 
 DisplayWorksOnModal();
 async function DeleteWorks(id) {
-  const response = await fetch(`http://localhost:5678/api/works/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-  });
+  console.log(id);
+  try {
+    const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
 
-  console.log(response);
-  return "succes";
+    if (response.ok) {
+      console.log("Image deleted successfully");
+      return "success";
+    } else {
+      console.error("Error deleting image");
+      return "error";
+    }
+  } catch (error) {
+    console.error("Error in DeleteWorks:", error);
+    return "error";
+  }
 }

@@ -16,19 +16,25 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) throw new Error("Login non reussi");
+      if (!response.ok) {
+        throw new Error("Login non réussi");
+      } else {
+        const data = await response.json();
+        console.log("Connexion réussi:", data);
 
-      const data = await response.json();
-      console.log("Login reussi:", data);
+        const token = data.token;
+        console.log(token);
+        localStorage.setItem("token", token);
 
-      const token = data.token;
-      console.log(token);
-      localStorage.setItem("token", token);
+        alert("Connexion réussie!");
 
-      !!localStorage.getItem("token")
+        if (localStorage.getItem("token")) {
+          window.location.href = "index.html";
+        }
+      }
     } catch (error) {
       console.error("Error:", error);
-      alert("Login non reussi. Verifiez votre e-mail ou mot de passe.");
+      alert("Login non réussi. Vérifiez votre e-mail ou mot de passe.");
     }
   });
 });
